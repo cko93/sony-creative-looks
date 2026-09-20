@@ -27,16 +27,19 @@ No GitHub Pages workflow, generated deployment branch, or GitHub Actions configu
 
 ### Application entry
 
-- Add a browser entry point that mounts the existing React field-guide component.
-- Add an HTML document entry point required by Vite.
-- Retain the current `app/page.tsx` component and `app/globals.css` stylesheet as the guide's source.
-- Remove framework-specific directives and configuration only where they are unnecessary for a browser-only React application.
+- Add a browser entry point that imports `app/globals.css` and mounts the existing React field-guide component with `createRoot`.
+- Add the HTML document entry point required by Vite. It must retain the current document language, viewport, title, description, and favicon metadata, which currently live in the Next layout.
+- Retain the current guide component and stylesheet as the guide's source; remove the now-unnecessary `use client` directive from the component.
+- Remove the unused Next layout, Next configuration, Next environment declarations, and other framework-specific files after their metadata and configuration responsibilities have been migrated.
 
 ### Build configuration
 
 - Replace the Cloudflare/Sites/Vinext Vite configuration with a conventional React Vite configuration.
-- Update package scripts to use `vite`, `vite build`, and `vite preview`.
-- Remove dependencies used solely for the old Cloudflare/Sites runtime.
+- Preserve Tailwind's existing PostCSS processing rather than assuming its stylesheet import is inert; the conversion must explicitly retain the `tailwindcss` and `@tailwindcss/postcss` toolchain or remove the import only after a visual comparison proves it is unnecessary.
+- Update package scripts to use `vite`, `vite build`, and `vite preview`. Add `typecheck` and `check` scripts, and make the production `build` script run `check` before `vite build` so every Vercel release is linted and type-checked.
+- Replace the Next-specific ESLint configuration with framework-neutral React and TypeScript rules, and remove Next and Cloudflare type references from TypeScript configuration.
+- Remove dependencies used solely for the old Cloudflare/Sites/Vinext and Next runtimes after the replacement configuration has no consumers.
+- Pin Node to the intended supported major (`22.x`) and add an exact `packageManager` version compatible with the checked-in pnpm lockfile for repeatable Vercel builds.
 - Keep the production output in Vite's default `dist/` directory.
 
 ### Vercel configuration
@@ -53,7 +56,7 @@ No GitHub Pages workflow, generated deployment branch, or GitHub Actions configu
 
 ## Failure handling
 
-- Dependency installation, lint failures, and build failures block a release.
+- Dependency installation, type-check, lint, and build failures block a release because the Vercel production build runs the repository's `build` script.
 - Vercel's deployment logs expose failures after the GitHub integration is enabled.
 - External Fuji image hosts are not controlled by this deployment; unavailable remote images will continue to fail gracefully as image backgrounds without affecting the guide's controls or text.
 
@@ -61,15 +64,15 @@ No GitHub Pages workflow, generated deployment branch, or GitHub Actions configu
 
 Before handoff, verify:
 
-1. Lint passes.
+1. Type-check and lint pass through the repository `check` script.
 2. A production build succeeds and produces `dist/`.
-3. A local static preview serves the built guide.
+3. A local static preview serves the built guide with its existing styling and document metadata.
 4. Core interactions work: tab switching, recipe search, card expansion, and external source links.
-5. No Cloudflare/Sites-only runtime configuration remains in the build path.
+5. No Cloudflare/Sites, Vinext, or Next-only runtime configuration remains in the build path.
 
 ## One-time user setup
 
 1. Create or push this project to a GitHub repository.
 2. Import that repository into Vercel and select the Vite framework preset if it is not auto-detected.
-3. Confirm Vercel uses `pnpm build` and publishes `dist/`.
+3. Confirm the Vercel Production Branch is `main`, the Build Command is `pnpm build`, the Node version is 22.x, and the output directory is `dist/`.
 4. Merge or push to `main` to create the first production deployment.
