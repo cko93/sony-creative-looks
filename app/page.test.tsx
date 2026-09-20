@@ -49,10 +49,12 @@ describe('Sony field guide', () => {
     const html = await readFile(resolve(process.cwd(), 'index.html'), 'utf8');
     const document = new DOMParser().parseFromString(html, 'text/html');
 
-    expect(document.documentElement).toHaveAttribute('lang', 'en');
+    expect(document.documentElement.getAttribute('lang')).toBe('en');
     expect(document.querySelector('meta[name="viewport"]')).not.toBeNull();
     expect(document.title).toBe('A7C II Field Looks');
     expect(document.querySelector('meta[name="description"]')).not.toBeNull();
-    expect(document.querySelector('link[rel="icon"]')).toHaveAttribute('href', '/favicon.svg');
+    expect(document.querySelector('link[rel="icon"]')?.getAttribute('href')).toBe(
+      '/favicon.svg',
+    );
   });
 });

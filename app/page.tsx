@@ -1,5 +1,3 @@
-'use client';
-
 import { useMemo, useState } from 'react';
 
 type Recipe = { name:string; slot:string; profile:string; mood:string; use:string; wb:string; aperture:string; exposure:string; recipe:string[]; fujiTarget:string[]; sourceLabel:string; sourceUrl?:string; fidelity:'translated'|'partial'|'custom'; imageUrl:string; imageAlt:string; tone:string };
