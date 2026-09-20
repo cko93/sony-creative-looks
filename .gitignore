@@ -12,14 +12,10 @@
 # testing
 /coverage
 
-# next.js
-/.next/
-/.vinext/
-/out/
-
 # misc
 .DS_Store
 *.pem
+*.tsbuildinfo
 
 # debug
 npm-debug.log*
@@ -34,6 +30,6 @@ yarn-error.log*
 .vercel
 next-env.d.ts
 /dist/
-/.wrangler/
-/outputs/
-/work/
+/coverage/
+/.vite/
+/.vercel/
